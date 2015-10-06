@@ -1,8 +1,10 @@
 package com.jhon.camara;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +27,25 @@ public class ImagenCapturada extends AppCompatActivity {
 
         imagenTomada = (ImageView)findViewById(R.id.imagenTomada);
         imagenTomada.setImageBitmap(Constantes.imagen);
+    }
+
+    private void createInstagramIntent(String type){
+
+        // Create the new Intent using the 'Send' action.
+        Intent share = new Intent(Intent.ACTION_SEND);
+
+        // Set the MIME type
+        share.setType(type);
+
+        // Create the URI from the media
+        File miImagen = new File("/sdcard/"+MainActivity.nombre+".PNG");
+        Uri uri = Uri.fromFile(miImagen);
+
+        // Add the URI to the Intent.
+        share.putExtra(Intent.EXTRA_STREAM, uri);
+
+        // Broadcast the Intent.
+        startActivity(Intent.createChooser(share, "Share to"));
     }
 
     @Override
@@ -59,5 +80,12 @@ public class ImagenCapturada extends AppCompatActivity {
         TweetComposer.Builder builder = new TweetComposer.Builder(ImagenCapturada.this).text("Mi imagen").image(uri);
         builder.show();
 
+    }
+
+    public void CompartirInstagram(View view)
+    {
+        //Instagram
+        String type = "image/*";
+        createInstagramIntent(type);
     }
 }

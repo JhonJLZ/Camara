@@ -17,4 +17,10 @@
         android:text="Compartir"
         android:onClick="Compartir"/>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Instagram"
+        android:onClick="CompartirInstagram"/>
+
 </LinearLayout>
