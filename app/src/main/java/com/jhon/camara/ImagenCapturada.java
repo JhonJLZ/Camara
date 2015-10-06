@@ -24,7 +24,7 @@ public class ImagenCapturada extends AppCompatActivity {
         setContentView(R.layout.activity_imagen);
 
         imagenTomada = (ImageView)findViewById(R.id.imagenTomada);
-        imagenTomada.setImageBitmap(MainActivity.imagen);
+        imagenTomada.setImageBitmap(Constantes.imagen);
     }
 
     @Override

@@ -41,10 +41,8 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 
 
     private static final String TAG = "jhon.hardware";
-    public static Bitmap imagen;
     private LayoutInflater mInflater = null;
     Camera camera;
-    public static byte[] tempdata;
     boolean mPreviewRunning = false;
     private SurfaceHolder mSurfaceHolder;
     private SurfaceView mSurfaceView;
@@ -125,7 +123,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         public void onPictureTaken(byte[] data, Camera camera) {
             // TODO Auto-generated method stub
             if(data != null){
-                tempdata = data;
+                Constantes.tempdata = data;
                 done();
             }
         }
@@ -137,13 +135,13 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         OutputStream outStream = null;
         File file = new File("/sdcard/DCIM/",String.valueOf(nombre)+ ".PNG");
         try {
-            imagen=BitmapFactory.decodeByteArray(tempdata, 0, tempdata.length);
+            Constantes.imagen=BitmapFactory.decodeByteArray(Constantes.tempdata, 0, Constantes.tempdata.length);
 
-            Filtro filtro = new Filtro(imagen);
-            imagen = filtro.executeFilter(MainActivity.this);
+            Filtro filtro = new Filtro(Constantes.imagen);
+            Constantes.imagen = filtro.executeFilter(MainActivity.this);
 
             outStream = new FileOutputStream(file);
-            imagen.compress(Bitmap.CompressFormat.PNG, 100, outStream);
+            Constantes.imagen.compress(Bitmap.CompressFormat.PNG, 100, outStream);
             outStream.flush();
             outStream.close();
             //Abrir Activity luego de guardar la foto
@@ -179,7 +177,8 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
     }
 
     @Override
-    public void surfaceCreated(SurfaceHolder holder) {
+    public void surfaceCreated(SurfaceHolder holder)
+    {
         // TODO Auto-generated method stub
         Log.e(TAG, "Surface Created");
         camera = Camera.open();
