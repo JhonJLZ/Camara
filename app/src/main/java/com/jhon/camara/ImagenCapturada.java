@@ -1,5 +1,6 @@
 package com.jhon.camara;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -15,8 +16,12 @@ public class ImagenCapturada extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_imagen);
 
+        Filtro filtro = new Filtro(MainActivity.imagen);
+        Bitmap icono = filtro.executeFilter(ImagenCapturada.this);
+
         imagenTomada = (ImageView)findViewById(R.id.imagenTomada);
-        imagenTomada.setImageBitmap(MainActivity.imagen);
+        //imagenTomada.setImageBitmap(MainActivity.imagen);
+        imagenTomada.setImageBitmap(icono);
     }
 
 
