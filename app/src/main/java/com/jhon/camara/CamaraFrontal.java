@@ -21,24 +21,12 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.twitter.sdk.android.Twitter;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Random;
 
-import io.fabric.sdk.android.Fabric;
-
-
-
-public class MainActivity extends Activity implements SurfaceHolder.Callback {
-
-    // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
-    private static final String TWITTER_KEY = "gvRHFEoxnEeL9T06dxEw7ONKR";
-    private static final String TWITTER_SECRET = "IXva31F3iNaoY4iSH74mASA5Ei4rEHQdgKIiF1zXnvz4T6ibDK";
-
+public class CamaraFrontal extends Activity implements SurfaceHolder.Callback{
 
     private static final String TAG = "jhon.hardware";
     public static Bitmap imagen;
@@ -51,39 +39,35 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
     Button takePicture;
     Button changeCamera;
 
-
     //Ruta y Nombre de la foto
     public static String url;
 
     //Nombres Ramdom
     Random random;
     public static int nombre;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
-        Fabric.with(this, new Twitter(authConfig));
-
         getWindow().setFormat(PixelFormat.TRANSLUCENT);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.camara_frontal);
 
-        setContentView(R.layout.activity_main);
-
-        mSurfaceView = (SurfaceView) findViewById(R.id.surface);
+        mSurfaceView = (SurfaceView) findViewById(R.id.surfaceFrontal);
         mSurfaceHolder = mSurfaceView.getHolder();
         mSurfaceHolder.addCallback(this);
         mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
         mInflater = LayoutInflater.from(this);
-        View overView = mInflater.inflate(R.layout.segunda_capa,null);
+        View overView = mInflater.inflate(R.layout.segunda_capa, null);
         this.addContentView(overView, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 
         changeCamera = (Button)findViewById(R.id.botonCambiar);
         changeCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CamaraFrontal.class);
+                Intent intent = new Intent(CamaraFrontal.this, MainActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -135,19 +119,19 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         nombre = random.nextInt(100000);
 
         OutputStream outStream = null;
-        File file = new File("/sdcard/DCIM/",String.valueOf(nombre)+ ".PNG");
+        File file = new File("/sdcard/",String.valueOf(nombre)+ ".PNG");
         try {
             imagen=BitmapFactory.decodeByteArray(tempdata, 0, tempdata.length);
 
             Filtro filtro = new Filtro(imagen);
-            imagen = filtro.executeFilter(MainActivity.this);
+            imagen = filtro.executeFilter(CamaraFrontal.this);
 
             outStream = new FileOutputStream(file);
             imagen.compress(Bitmap.CompressFormat.PNG, 100, outStream);
             outStream.flush();
             outStream.close();
             //Abrir Activity luego de guardar la foto
-            Intent intent = new Intent(MainActivity.this, ImagenCapturada.class);
+            Intent intent = new Intent(CamaraFrontal.this, ImagenCapturada.class);
             startActivity(intent);
 
         } catch(Exception e) {
@@ -156,10 +140,15 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width,
-                               int height) {
-        // TODO Auto-generated method stub
-        Log.e(TAG,"SurfaceChanged");
+    public void surfaceCreated(SurfaceHolder holder) {
+        Log.e(TAG,"Surface Created");
+        int camaraid = getFrontCameraId();
+        camera = Camera.open(camaraid);
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        Log.e(TAG, "SurfaceChanged");
         try{
             if(mPreviewRunning){
                 camera.stopPreview();
@@ -179,19 +168,25 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
     }
 
     @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        // TODO Auto-generated method stub
-        Log.e(TAG, "Surface Created");
-        camera = Camera.open();
-    }
-
-    @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        // TODO Auto-generated method stub
         Log.e(TAG, "Surface Destroyed");
         camera.stopPreview();
         mPreviewRunning = false;
         camera.release();
         camera = null;
+    }
+
+    private int getFrontCameraId(){
+        int camId = -1;
+        int numberOfCameras = Camera.getNumberOfCameras();
+        Camera.CameraInfo ci = new Camera.CameraInfo();
+
+        for(int i = 0;i < numberOfCameras;i++){
+            Camera.getCameraInfo(i,ci);
+            if(ci.facing == Camera.CameraInfo.CAMERA_FACING_FRONT){
+                camId = i;
+            }
+        }
+        return camId;
     }
 }

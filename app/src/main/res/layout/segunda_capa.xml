@@ -18,6 +18,12 @@
             android:id="@+id/botonFoto"
             android:background="@android:drawable/ic_menu_camera"/>
 
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/botonCambiar"
+            android:background="@android:drawable/ic_menu_revert"/>
     </LinearLayout>
 
 </LinearLayout>
