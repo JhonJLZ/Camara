@@ -123,7 +123,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         nombre = random.nextInt(100000);
 
         OutputStream outStream = null;
-        File file = new File("/sdcard/",String.valueOf(nombre)+ ".PNG");
+        File file = new File("/sdcard/DCIM/",String.valueOf(nombre)+ ".PNG");
         try {
             imagen=BitmapFactory.decodeByteArray(tempdata, 0, tempdata.length);
 
