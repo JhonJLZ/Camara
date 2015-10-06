@@ -21,23 +21,46 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.Random;
+
+import io.fabric.sdk.android.Fabric;
 
 
 
 public class MainActivity extends Activity implements SurfaceHolder.Callback {
 
+    // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
+    private static final String TWITTER_KEY = "gvRHFEoxnEeL9T06dxEw7ONKR";
+    private static final String TWITTER_SECRET = "IXva31F3iNaoY4iSH74mASA5Ei4rEHQdgKIiF1zXnvz4T6ibDK";
+
+
     private static final String TAG = "jhon.hardware";
     public static Bitmap imagen;
     private LayoutInflater mInflater = null;
     Camera camera;
-    byte[] tempdata;
+    public static byte[] tempdata;
     boolean mPreviewRunning = false;
     private SurfaceHolder mSurfaceHolder;
     private SurfaceView mSurfaceView;
     Button takePicture;
+
+    //Ruta y Nombre de la foto
+    public static String url;
+
+    //Nombres Ramdom
+    Random random;
+    public static int nombre;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+        Fabric.with(this, new Twitter(authConfig));
 
         getWindow().setFormat(PixelFormat.TRANSLUCENT);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -64,6 +87,8 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         });
 
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+        random = new Random();
     }
 
     ShutterCallback mShutterCallback = new ShutterCallback() {
@@ -95,23 +120,27 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
     };
 
     void done(){
-        Bitmap bm = BitmapFactory.decodeByteArray(tempdata, 0, tempdata.length);
-        String url = Images.Media.insertImage(getContentResolver(), bm, null, null);
-        bm.recycle();
-        Bundle bundle = new Bundle();
-        if(url != null){
-            bundle.putString("url",url);
+        nombre = random.nextInt(100000);
+
+        OutputStream outStream = null;
+        File file = new File("/sdcard/",String.valueOf(nombre)+ ".PNG");
+        try {
             imagen=BitmapFactory.decodeByteArray(tempdata, 0, tempdata.length);
-            Intent mIntent = new Intent();
-            mIntent.putExtras(bundle);
-            setResult(RESULT_OK, mIntent);
+
+            Filtro filtro = new Filtro(imagen);
+            imagen = filtro.executeFilter(MainActivity.this);
+
+            outStream = new FileOutputStream(file);
+            imagen.compress(Bitmap.CompressFormat.PNG, 100, outStream);
+            outStream.flush();
+            outStream.close();
+            //Abrir Activity luego de guardar la foto
             Intent intent = new Intent(MainActivity.this, ImagenCapturada.class);
             startActivity(intent);
+
+        } catch(Exception e) {
+            Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
         }
-        else{
-            Toast.makeText(this, "Picture can not be saved", Toast.LENGTH_SHORT).show();
-        }
-        //finish();
     }
 
     @Override

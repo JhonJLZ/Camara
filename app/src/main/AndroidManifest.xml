@@ -25,6 +25,10 @@
             android:name=".ImagenCapturada"
             android:label="@string/title_activity_imagen" >
         </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="03e57a53a298ba643c5f9c590f0be64d47e5dd49" />
     </application>
 
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

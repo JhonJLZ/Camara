@@ -14,11 +14,8 @@ public class Filtro extends Filter
 {
     private Bitmap bitmapIn1;
 
-    private double borderSize;
-
     public Filtro(Bitmap bitmapIn) {
         this.bitmapIn1 = bitmapIn;
-        this.borderSize = borderSize;
     }
 
     @Override
@@ -30,34 +27,21 @@ public class Filtro extends Filter
         //int x, y;
         //final int border = (int) (((width * this.getBorderSize()) + (height * this.getBorderSize())) / 2);
 
-        Bitmap iconoMarco = BitmapFactory.decodeResource(con.getResources(), R.drawable.marcodos);
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(this.getBitmapIn(), iconoMarco.getWidth(), iconoMarco.getHeight(), false);
+        Bitmap marco = BitmapFactory.decodeResource(con.getResources(), R.drawable.marcodos);
+        Bitmap ajustarMarco = Bitmap.createScaledBitmap(marco, this.getBitmapIn().getWidth(), this.getBitmapIn().getHeight(), false);
 
-        final Bitmap bitmapOut = Bitmap.createBitmap(width, height, resizedBitmap.getConfig());
+        //Logos
+        Bitmap logoUno = BitmapFactory.decodeResource(con.getResources(), R.mipmap.ic_launcher);
+
+        final Bitmap bitmapOut = Bitmap.createBitmap(width, height, this.getBitmapIn().getConfig());
 
         final Canvas canvas = new Canvas();
         canvas.setBitmap(bitmapOut);
 
-        canvas.drawBitmap(resizedBitmap, 0, 0, null);
-        canvas.drawBitmap(iconoMarco, 0, 0, null);
+        canvas.drawBitmap(this.getBitmapIn(), 0, 0, null);
+        canvas.drawBitmap(ajustarMarco, 0, 0, null);
+        canvas.drawBitmap(logoUno, 200, 0, null);
 
-        /*final Paint paint = new Paint();
-        for (x = 0; x < width; x++) {
-            for (y = 0; y < height; y++) {
-                if (((x < border) || (x > width - border))
-                        || ((y < border) || (y > height - border))) {
-                    paint.setARGB(0, 0, 255, 0);
-                    canvas.drawPoint(x, y, paint);
-                }
-                if (((x == border) || (x == width - border))
-                        || ((y == border) || (y == height - border))) {
-                    paint.setARGB(127, 255, 255, 255);
-                    canvas.drawPoint(x, y, paint);
-                }
-            }
-        }
-        //time = System.currentTimeMillis() - time;
-        //System.out.println("Finished @ " + time + "ms");*/
 
         return bitmapOut;
     }
@@ -68,13 +52,5 @@ public class Filtro extends Filter
 
     public void setBitmapIn(Bitmap bitmapIn) {
         this.bitmapIn1 = bitmapIn;
-    }
-
-    public double getBorderSize() {
-        return borderSize;
-    }
-
-    public void setBorderSize(double borderSize) {
-        this.borderSize = borderSize;
     }
 }
