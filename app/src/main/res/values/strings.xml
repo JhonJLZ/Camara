@@ -5,4 +5,5 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_imagen">imagen</string>
     <string name="title_activity_camara_frontal">CamaraFrontal</string>
+    <string name="title_activity_gallery">Gallery</string>
 </resources>
