@@ -10,9 +10,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,10 +30,19 @@ public class Gallery extends AppCompatActivity {
         setContentView(R.layout.activity_gallery);
 
         imageGrid = (GridView)findViewById(R.id.gridview);
-        File f = new File(Environment.getExternalStorageDirectory() + "/DCIM/ejemplo/");
+        File f = new File(Environment.getRootDirectory() + "/DCIM/ejemplo/");
+                //getExternalStorageDirectory() + "/DCIM/ejemplo/");
         list = imageReader(f);
 
         imageGrid.setAdapter(new NewGridAdapter(this));
+
+        imageGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String captura = imageGrid.getItemAtPosition(position).toString();
+                Toast.makeText(Gallery.this, captura, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     class NewGridAdapter extends BaseAdapter {
@@ -74,7 +85,6 @@ public class Gallery extends AppCompatActivity {
             options.inSampleSize = 2;
             Bitmap myBitmap = BitmapFactory.decodeFile(picture.getAbsolutePath(), options);
             imageView.setImageBitmap(myBitmap);
-            //imageView.setImageResource(list.get(position));
             return imageView;
         }
     }
